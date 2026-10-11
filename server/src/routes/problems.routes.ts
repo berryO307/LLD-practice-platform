@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { ProblemRepository } from '../services/ProblemRepository.js';
 
 const router = Router();
@@ -24,6 +25,12 @@ router.get('/', async (_req, res) => {
 
 // GET /api/problems/:id — full detail for the practice workspace
 router.get('/:id', async (req, res) => {
+  // Postgres rejects a non-UUID value for a uuid column with an error; a
+  // malformed id simply can't match any problem.
+  if (!z.string().uuid().safeParse(req.params.id).success) {
+    return res.status(404).json({ error: 'Problem not found' });
+  }
+
   try {
     const problem = await problemRepo.getById(req.params.id);
     if (!problem) {

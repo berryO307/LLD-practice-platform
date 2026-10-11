@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
 import { AttemptNotFoundError, AttemptService, InvalidRetryStateError } from '../services/AttemptService.js';
-import { validateSubmissionText } from '../domain/SubmissionValidator.js';
+import { MAX_ASSUMPTIONS_LENGTH, validateSubmissionText } from '../domain/SubmissionValidator.js';
 
 const router = Router();
 const attemptService = new AttemptService();
@@ -21,7 +21,7 @@ const submitAttemptSchema = z.object({
   userId: z.string().uuid(),
   problemId: z.string().uuid(),
   text: z.string(),
-  assumptions: z.string().optional(),
+  assumptions: z.string().max(MAX_ASSUMPTIONS_LENGTH).optional(),
 });
 
 // POST /api/attempts — submit a design for evaluation. Persists synchronously
@@ -77,6 +77,10 @@ router.post('/:attemptId/retry', submitAttemptLimiter, async (req, res) => {
 
 // GET /api/attempts/:userId/history — past attempts + latest feedback per attempt
 router.get('/:userId/history', async (req, res) => {
+  if (!z.string().uuid().safeParse(req.params.userId).success) {
+    return res.status(400).json({ error: 'Invalid user id' });
+  }
+
   try {
     const history = await attemptService.getHistoryForUser(req.params.userId);
     res.json(history);

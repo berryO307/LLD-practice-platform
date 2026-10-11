@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_SUBMISSION_LENGTH, validateSubmissionText } from './SubmissionValidator.js';
+import { MAX_SUBMISSION_LENGTH, MIN_SUBMISSION_LENGTH, validateSubmissionText } from './SubmissionValidator.js';
 
 describe('validateSubmissionText', () => {
   it('rejects undefined/missing text', () => {
@@ -27,6 +27,15 @@ describe('validateSubmissionText', () => {
 
   it('accepts text longer than the minimum length', () => {
     expect(validateSubmissionText('a'.repeat(MIN_SUBMISSION_LENGTH + 100))).toBeNull();
+  });
+
+  it('accepts text at exactly the maximum length', () => {
+    expect(validateSubmissionText('a'.repeat(MAX_SUBMISSION_LENGTH))).toBeNull();
+  });
+
+  it('rejects text longer than the maximum length', () => {
+    const result = validateSubmissionText('a'.repeat(MAX_SUBMISSION_LENGTH + 1));
+    expect(result).toMatch(/at most/);
   });
 
   it('measures length after trimming surrounding whitespace', () => {

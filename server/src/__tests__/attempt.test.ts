@@ -189,6 +189,55 @@ describe('POST /api/attempts — deterministic validation', () => {
 
     expect(res.status).toBe(400);
   });
+
+  it('rejects a submission over the maximum length with 400', async () => {
+    const res = await request(app)
+      .post('/api/attempts')
+      .send({ userId: randomUUID(), problemId: randomUUID(), text: 'A'.repeat(10_001) });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/at most/i);
+  });
+
+  it('rejects assumptions over the maximum length with 400', async () => {
+    const res = await request(app)
+      .post('/api/attempts')
+      .send({ userId: randomUUID(), problemId: randomUUID(), text: 'A'.repeat(60), assumptions: 'B'.repeat(2_001) });
+
+    expect(res.status).toBe(400);
+  });
+});
+
+describe('API error responses', () => {
+  const app = createApp();
+
+  it('returns a JSON 400 (not an HTML page) for malformed JSON', async () => {
+    const res = await request(app)
+      .post('/api/attempts')
+      .set('content-type', 'application/json')
+      .send('{bad json');
+
+    expect(res.status).toBe(400);
+    expect(res.headers['content-type']).toMatch(/json/);
+    expect(res.body).toEqual({ error: 'Invalid request body' });
+  });
+
+  it('returns a JSON 404 for an unknown route', async () => {
+    const res = await request(app).get('/api/does-not-exist');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: 'Not found' });
+  });
+
+  it('returns 404 (not 500) for a non-uuid problem id', async () => {
+    const res = await request(app).get('/api/problems/abc');
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 400 (not 500) for a non-uuid user id in history', async () => {
+    const res = await request(app).get('/api/attempts/abc/history');
+    expect(res.status).toBe(400);
+  });
 });
 
 describe('POST /api/attempts/:id/retry — state machine', () => {
