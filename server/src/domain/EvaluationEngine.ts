@@ -3,7 +3,7 @@ import type { Rubric } from './Rubric.js';
 import type { Feedback } from './Feedback.js';
 
 /**
- * Strategy interface (Change Test B). AttemptService depends only on this
+ * Strategy interface for evaluators. AttemptService depends only on this
  * interface — swapping LLMEvaluator for a HumanEvaluator or RuleBasedEvaluator
  * later requires no change here and no change to the API layer, since every
  * implementation returns a Feedback. Deterministic checks are a separate,

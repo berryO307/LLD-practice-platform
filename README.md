@@ -1,5 +1,8 @@
 # LLD Practice Platform
 
+[![CI](https://github.com/berryO307/cipherschools-lld-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/berryO307/cipherschools-lld-platform/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Practice Low-Level Design the way you practice algorithms: pick a problem, write your
 design, and get structured, rubric-scored feedback on it in seconds.
 
@@ -41,9 +44,9 @@ the same fixed rubric, and every score has to point at evidence in what you wrot
   score and a two-sentence summary. Explicit scoring bands keep results consistent:
   90–100 production-ready, 70–89 good with minor leaks, 50–69 noticeable
   anti-patterns, below 50 a fundamental misunderstanding.
-- **Cheap checks first.** Empty or too-short submissions (under 50 characters) are
-  rejected immediately at the API, before anything is stored or sent to the AI. The
-  AI's judgment is only spent on designs worth judging.
+- **Cheap checks first.** Empty, too-short (under 50 characters), or oversized (over
+  10,000 characters) submissions are rejected immediately at the API, before anything
+  is stored or sent to the AI. The AI's judgment is only spent on designs worth judging.
 - **No waiting on a slow request.** Your submission is saved first, the API responds
   right away, and evaluation runs in the background while the UI shows its progress.
 - **Nothing is lost on failure.** If an evaluation fails (timeout, quota, malformed
@@ -68,8 +71,8 @@ The core is written so that new capabilities plug in rather than requiring rewri
 - **Resilient AI calls.** Evaluation calls have a timeout, retries with backoff for
   transient overloads, structured-output enforcement, and truncation detection. Every
   failure becomes a readable reason on the attempt instead of a crash.
-- **Abuse protection.** Submission and retry endpoints share a rate limit, since both
-  trigger a paid AI call.
+- **Abuse protection.** Submission and retry endpoints share a per-client rate limit,
+  since both trigger a paid AI call, and submission size is capped.
 
 ## Tech stack
 
@@ -85,6 +88,7 @@ The core is written so that new capabilities plug in rather than requiring rewri
 ## Project layout
 
 ```
+.github/  CI workflow
 client/   React frontend (Vite)
 server/   Express API, Drizzle schema, domain logic, tests
   src/domain/     Submission, EvaluationEngine, LLMEvaluator, Attempt, Rubric, Feedback
@@ -143,7 +147,8 @@ file is needed as long as the backend's `FRONTEND_URL` is `http://localhost:5173
 
 ```bash
 cd server
-npm test
+npm test            # run the test suite
+npm run typecheck   # typecheck sources and tests
 ```
 
 The suite needs no database or API key; everything external is mocked or injected.
@@ -151,8 +156,12 @@ It covers:
 - unit tests for the attempt state machine, submission validation, and the AI
   evaluator (`src/domain/*.test.ts`), and
 - integration tests against the real Express app with an in-memory database
-  (`src/__tests__/attempt.test.ts`): input validation, retry transitions and their error
-  codes, and evaluation failures being recorded without crashing the server.
+  (`src/__tests__/attempt.test.ts`): input validation and size limits, retry
+  transitions and their error codes, JSON error responses, and evaluation failures
+  being recorded without crashing the server.
+
+GitHub Actions runs the server's typecheck, tests, and build, plus the client's lint
+and build, on every push and pull request (`.github/workflows/ci.yml`).
 
 ## Deployment
 
@@ -179,6 +188,9 @@ It covers:
    `https://your-api.up.railway.app/api`.
 3. Deploy. Vite builds `VITE_API_URL` into the bundle, so redeploy whenever you change
    it.
+
+`client/vercel.json` routes every path to the app, so direct links and page refreshes
+on routes like `/practice/<id>` work.
 
 ### Secrets stay out of the repo
 

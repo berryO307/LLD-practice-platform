@@ -25,7 +25,7 @@ export class LLMEvaluationError extends Error {}
  * check at the API boundary — this evaluator never sees a trivially-invalid
  * submission and never scores "is the text present" alongside real design
  * judgment. Implements the same EvaluationEngine interface as any future
- * evaluator so AttemptService can treat them interchangeably (Change Test B).
+ * evaluator so AttemptService can treat them interchangeably.
  *
  * Backed by the Gemini API via @google/genai with structured (schema-
  * constrained) JSON output. gemini-3.6-flash is a reasoning ("thinking")

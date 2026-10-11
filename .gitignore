@@ -1,6 +1,14 @@
 node_modules/
 dist/
-.env
-.env.local
+coverage/
 *.log
 .DS_Store
+
+# Environment files hold secrets; only the .example templates are committed.
+.env
+.env.*
+!.env.example
+
+# Tooling
+.vercel
+.idea/

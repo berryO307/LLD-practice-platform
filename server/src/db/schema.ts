@@ -22,7 +22,7 @@ export const attemptStatusEnum = pgEnum('attempt_status', [
 
 export const submissionKindEnum = pgEnum('submission_kind', [
   'text',
-  // 'class_diagram' — reserved for a future submission format (Change Test A)
+  // 'class_diagram' — reserved for a future submission format
 ]);
 
 export const evaluatorKindEnum = pgEnum('evaluator_kind', [
@@ -80,7 +80,7 @@ export const attempts = pgTable('attempts', {
   problemId: uuid('problem_id').notNull().references(() => problems.id),
   status: attemptStatusEnum('status').notNull().default('submitted'),
 
-  // --- Submission payload (Change Test A: kind discriminates the shape) ---
+  // --- Submission payload (kind discriminates the shape of the content) ---
   submissionKind: submissionKindEnum('submission_kind').notNull().default('text'),
   submissionContent: jsonb('submission_content').$type<Record<string, unknown>>().notNull(),
 

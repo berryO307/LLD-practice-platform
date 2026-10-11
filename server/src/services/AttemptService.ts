@@ -38,9 +38,8 @@ export class InvalidRetryStateError extends Error {
  * — this class only ever runs the LLM (architectural-judgment) evaluator.
  * It depends only on the EvaluationEngine interface, so swapping LLMEvaluator
  * for a different implementation (human review, rule-based) requires no
- * change here (Change Test B). It depends only on the Submission interface
- * for the payload, so a new submission kind requires no change either
- * (Change Test A).
+ * change here. It depends only on the Submission interface for the payload,
+ * so a new submission kind requires no change either.
  */
 export class AttemptService {
   constructor(

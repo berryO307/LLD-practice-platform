@@ -8,7 +8,7 @@ export interface EvaluableContent {
   // structuredGraph?: Graph; — reserved for a future ClassDiagramSubmission
 }
 
-export type SubmissionKind = 'text'; // extend with 'class_diagram' later (Change Test A)
+export type SubmissionKind = 'text'; // extend with 'class_diagram' later
 
 /**
  * A Submission is whatever a learner hands in for an Attempt. The evaluation
