@@ -1,6 +1,6 @@
 # LLD Practice Platform
 
-[![CI](https://github.com/berryO307/cipherschools-lld-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/berryO307/cipherschools-lld-platform/actions/workflows/ci.yml)
+[![CI](https://github.com/berryO307/LLD-practice-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/berryO307/LLD-practice-platform/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Practice Low-Level Design the way you practice algorithms: pick a problem, write your
