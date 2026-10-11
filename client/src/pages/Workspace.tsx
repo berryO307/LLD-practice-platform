@@ -11,7 +11,10 @@ import { AttemptHistoryAccordion } from '@/components/AttemptHistoryAccordion'
 
 const POLL_INTERVAL_MS = 2000
 const POLL_TIMEOUT_MS = 60000
+// Must match the server's limits in server/src/domain/SubmissionValidator.ts.
 const MIN_SUBMISSION_LENGTH = 50
+const MAX_SUBMISSION_LENGTH = 10_000
+const MAX_ASSUMPTIONS_LENGTH = 2_000
 
 export function Workspace() {
   const { problemId } = useParams<{ problemId: string }>()
@@ -142,7 +145,20 @@ export function Workspace() {
   }
 
   if (!problem) {
-    return <div className="mx-auto max-w-5xl px-6 py-10 text-sm text-muted-foreground">Loading problem…</div>
+    return (
+      <div className="mx-auto max-w-5xl px-6 py-10 text-sm text-muted-foreground">
+        {error ? (
+          <>
+            <p className="text-destructive">{error}</p>
+            <Link to="/" className="mt-2 inline-block hover:underline">
+              ← Back to all problems
+            </Link>
+          </>
+        ) : (
+          'Loading problem…'
+        )}
+      </div>
+    )
   }
 
   return (
@@ -179,6 +195,7 @@ export function Workspace() {
                   value={assumptions}
                   onChange={(e) => setAssumptions(e.target.value)}
                   placeholder="Any assumptions you're making about scope, scale, or constraints..."
+                  maxLength={MAX_ASSUMPTIONS_LENGTH}
                   className="min-h-16"
                 />
               </div>
@@ -188,10 +205,13 @@ export function Workspace() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Describe your classes, their responsibilities, relationships, and reasoning..."
+                  maxLength={MAX_SUBMISSION_LENGTH}
                   className="min-h-64"
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {text.trim().length}/{MIN_SUBMISSION_LENGTH} characters minimum
+                  {text.trim().length < MIN_SUBMISSION_LENGTH
+                    ? `${text.trim().length}/${MIN_SUBMISSION_LENGTH} characters minimum`
+                    : `${text.length.toLocaleString()}/${MAX_SUBMISSION_LENGTH.toLocaleString()} characters`}
                 </p>
               </div>
 
