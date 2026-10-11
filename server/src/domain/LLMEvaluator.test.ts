@@ -14,9 +14,10 @@ const { generateContentMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: { generateContent: generateContentMock },
-  })),
+  // A regular function, not an arrow: LLMEvaluator calls this with `new`.
+  GoogleGenAI: vi.fn(function () {
+    return { models: { generateContent: generateContentMock } };
+  }),
   Type: { ARRAY: 'ARRAY', OBJECT: 'OBJECT', STRING: 'STRING', NUMBER: 'NUMBER' },
 }));
 
