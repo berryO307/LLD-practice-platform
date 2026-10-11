@@ -1,9 +1,7 @@
 import type { AttemptHistoryItem, ProblemDetail, ProblemSummary } from '@/types'
 
-// In production (Vercel), there is no dev-server proxy, so the deployed
-// Railway backend's URL must be provided via VITE_API_URL. Locally, the
-// fallback of 'http://localhost:4000/api' talks straight to the backend
-// (CORS-permitted via FRONTEND_URL) without needing that env var set.
+// A production build must set VITE_API_URL to the deployed backend. Locally,
+// the fallback talks straight to the backend (CORS-permitted via FRONTEND_URL).
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {

@@ -1,7 +1,7 @@
 /**
  * Integration-style tests for the Attempt submission/retry/resilience flow.
  *
- * Rather than pointing at a real Neon database and a real Gemini API key,
+ * Rather than pointing at a real database and a real Gemini API key,
  * this file replaces the `db` module with a small in-memory fake and mocks
  * drizzle-orm's `eq`/`desc` helpers so that fake can interpret `.where(...)`
  * clauses. Everything else — Express routing, SubmissionValidator, the

@@ -12,3 +12,4 @@ coverage/
 # Tooling
 .vercel
 .idea/
+.vscode/
